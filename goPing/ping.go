@@ -2,32 +2,33 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 )
 
-func main() {
-	// 1. Check for command-line argument
+func validate_args() string {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run simple_ping.go <URL>")
-		os.Exit(1)
+		fmt.Println("Usage: go run ping.go <HTTP_URL>")
+		log.Fatalf("URL not given, please give HTTP URL")
 	}
 	url := os.Args[1]
+	return url
+}
 
-	// 2. Perform a simple GET request
+func try_ping(url string) (*http.Response, error) {
 	response, err := http.Get(url)
 
-	// 3. Handle Errors
 	if err != nil {
-		// This handles network errors, DNS failures, etc.
 		fmt.Printf("🔴 PING FAILED for %s: %v\n", url, err)
-		return
+		return nil, err
 	}
 
-	// 4. Close the response body (crucial!)
-	defer response.Body.Close()
+	return response, nil
+}
 
-	// 5. Report Status
+func check_ping_response(response *http.Response, err error, url string) {
+	defer response.Body.Close()
 	status := response.StatusCode
 
 	if status >= 200 && status < 300 {
@@ -38,4 +39,17 @@ func main() {
 		fmt.Printf("🟡 PING RECEIVED, but FAILED with status %d (%s)\n",
 			status, http.StatusText(status))
 	}
+}
+
+func ping_error_check(err error) {
+	if err != nil {
+		log.Fatalf("")
+	}
+}
+
+func main() {
+	url := validate_args()
+	response, err := try_ping(url)
+	ping_error_check(err)
+	check_ping_response(response, err, url)
 }
