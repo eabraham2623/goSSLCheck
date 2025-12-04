@@ -16,7 +16,7 @@ func validate_args() string {
 	return url
 }
 
-func try_ping(url string) (*http.Response, error) {
+func TryPing(url string) (*http.Response, error) {
 	response, err := http.Get(url)
 
 	if err != nil {
@@ -27,7 +27,7 @@ func try_ping(url string) (*http.Response, error) {
 	return response, nil
 }
 
-func check_ping_response(response *http.Response, err error, url string) {
+func CheckPingResponse(response *http.Response, err error, url string) {
 	defer response.Body.Close()
 	status := response.StatusCode
 
@@ -41,7 +41,7 @@ func check_ping_response(response *http.Response, err error, url string) {
 	}
 }
 
-func ping_error_check(err error) {
+func PingErrorCheck(err error) {
 	if err != nil {
 		log.Fatalf("")
 	}
@@ -49,7 +49,7 @@ func ping_error_check(err error) {
 
 func main() {
 	url := validate_args()
-	response, err := try_ping(url)
-	ping_error_check(err)
-	check_ping_response(response, err, url)
+	response, err := TryPing(url)
+	PingErrorCheck(err)
+	CheckPingResponse(response, err, url)
 }
